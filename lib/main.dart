@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'KKS_Screen/random_user_tab.dart';
 
 void main() {
   runApp(const MainApp());
@@ -22,7 +23,10 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   int _selectedindex = 0;
-  static const List<Widget> tabs = <Widget>[Center(), Center()];
+  static const List<Widget> tabs = <Widget>[
+    const RandomUserTab(),
+    const Center(),
+  ];
 
   void _onTappedTab(int index) {
     setState(() {
@@ -38,8 +42,8 @@ class _MainAppState extends State<MainApp> {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedindex,
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.abc), label: "random user"),
-            BottomNavigationBarItem(icon: Icon(Icons.abc_rounded), label: "spotify"),
+            BottomNavigationBarItem(icon: Icon(Icons.abc), label: "Random User"),
+            BottomNavigationBarItem(icon: Icon(Icons.abc_rounded), label: "Spotify"),
           ],
           onTap: _onTappedTab,
         ),
