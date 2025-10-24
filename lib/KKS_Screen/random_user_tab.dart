@@ -1,3 +1,11 @@
+/*
+Krystal Schneider
+10/29/2025
+Reflection: Using finals to fetch API data was still a challenge, especially taking that data into
+usable data in order to display it.
+*/
+
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
