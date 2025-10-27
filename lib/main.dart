@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:lab8_eat_kks/spotify/apibase.dart';
 import 'KKS_Screen/random_user_tab.dart';
 
-void main() {
+Future<void> main() async {
+  // Load the .env file before the app starts
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   runApp(const MainApp());
 }
 
@@ -9,28 +14,21 @@ class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
-    );
-  }
-
-  @override
-  State<StatefulWidget> createState() {
-    return _MainAppState();
-  }
+  State<MainApp> createState() => _MainAppState();
 }
 
 class _MainAppState extends State<MainApp> {
-  int _selectedindex = 0;
+  int _selectedIndex = 0;
+
+  // List of tabs
   static const List<Widget> tabs = <Widget>[
-    const RandomUserTab(),
-    const Center(),
+    RandomUserTab(),
+    Apibase(),
   ];
 
   void _onTappedTab(int index) {
     setState(() {
-      _selectedindex = index;
+      _selectedIndex = index;
     });
   }
 
@@ -38,12 +36,18 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: tabs[_selectedindex],
+        body: tabs[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedindex,
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.abc), label: "Random User"),
-            BottomNavigationBarItem(icon: Icon(Icons.abc_rounded), label: "Spotify"),
+          currentIndex: _selectedIndex,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.supervised_user_circle),
+              label: "Random User",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.headphones),
+              label: "Spotify",
+            ),
           ],
           onTap: _onTappedTab,
         ),
