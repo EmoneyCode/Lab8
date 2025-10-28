@@ -6,10 +6,27 @@ usable data in order to display it. JSON is also still a little confusing compar
 other langanges and how they handle it.
 */
 
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+class User {
+  final String name;
+  final String email;
+  final String gender;
+  final String country;
+  final String picture;
+
+  // Factory constructor to create a User object from a JSON map
+  User.fromJson(Map<String, dynamic> json)
+      // Extract the full name from nested 'name' map
+      : name = '${json['name']['first']} ${json['name']['last']}',
+        email = json['email'],
+        gender = json['gender'],
+        country = json['location']['country'],
+        // Extract the thumbnail URL from nested 'picture' map
+        picture = json['picture']['thumbnail'];
+}
 
 // Main StatefulWidget that displays Random User data
 class RandomUserTab extends StatefulWidget {
@@ -23,18 +40,20 @@ class RandomUserTab extends StatefulWidget {
 class _RandomUserTabState extends State<RandomUserTab> {
   final TextEditingController _countController = TextEditingController();
 
-  Future<List<dynamic>>? _futureUsers;
+  // Changed to hold a Future of a List of User objects
+  Future<List<User>>? _futureUsers;
 
-  // Fetches a list of random users from the public RandomUser API
-  Future<List<dynamic>> fetchRandomUsers(int count) async {
+  // Fetches a list of random users and converts the JSON data into a List<User>
+  Future<List<User>> fetchRandomUsers(int count) async {
     // Perform a GET request to the API with the user-specified count
     final response =
         await http.get(Uri.parse('https://randomuser.me/api/?results=$count'));
 
     // If successful decode the response body as JSON
     if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-      return jsonData['results'];
+      final data = json.decode(response.body);
+      // Map the list of JSON results to a list of User objects
+      return (data['results'] as List).map((u) => User.fromJson(u)).toList();
     } else {
       throw Exception('Failed to load users');
     }
@@ -95,7 +114,8 @@ class _RandomUserTabState extends State<RandomUserTab> {
                   // Initial message before any fetch
                   ? const Center(child: Text('Enter a number and tap Fetch'))
 
-                  : FutureBuilder<List<dynamic>>(
+                  // Now using FutureBuilder with Future<List<User>>
+                  : FutureBuilder<List<User>>(
                       future: _futureUsers,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -117,19 +137,18 @@ class _RandomUserTabState extends State<RandomUserTab> {
                         } else {
                           final users = snapshot.data!;
 
-                          // List of user titles
+                          // List of user tiles
                           return ListView.builder(
                             itemCount: users.length,
                             itemBuilder: (context, index) {
                               final user = users[index];
 
-                              // JSON extraction
-                              final name =
-                                  '${user['name']['first']} ${user['name']['last']}';
-                              final email = user['email'];
-                              final gender = user['gender'];
-                              final country = user['location']['country'];
-                              final picture = user['picture']['thumbnail'];
+                              // Direct access to User properties
+                              final name = user.name;
+                              final email = user.email;
+                              final gender = user.gender;
+                              final country = user.country;
+                              final picture = user.picture;
 
                               // Each user is displayed as a ListTile with avatar and details
                               return ListTile(
