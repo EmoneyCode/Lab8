@@ -1,18 +1,17 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class Apibase extends StatefulWidget {
-  const Apibase({super.key});
+class IMDb extends StatefulWidget {
+  const IMDb({super.key});
   @override
   State<StatefulWidget> createState() {
-    return _apiBaseState();
+    return _IMDbstate();
   }
 }
 
-class _apiBaseState extends State<Apibase> {
+class _IMDbstate extends State<IMDb> {
   late final String bearerToken;
 
   final TextEditingController _controller = TextEditingController();

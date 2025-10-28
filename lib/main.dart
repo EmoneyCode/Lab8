@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:lab8_eat_kks/spotify/apibase.dart';
+import 'package:lab8_eat_kks/spotify/imdb.dart';
 import 'KKS_Screen/random_user_tab.dart';
 
 Future<void> main() async {
@@ -23,7 +23,7 @@ class _MainAppState extends State<MainApp> {
   // List of tabs
   static const List<Widget> tabs = <Widget>[
     RandomUserTab(),
-    Apibase(),
+    IMDb(),
   ];
 
   void _onTappedTab(int index) {
