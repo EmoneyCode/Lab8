@@ -45,8 +45,8 @@ class _MainAppState extends State<MainApp> {
               label: "Random User",
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.headphones),
-              label: "Spotify",
+              icon: Icon(Icons.movie),
+              label: "Movies",
             ),
           ],
           onTap: _onTappedTab,

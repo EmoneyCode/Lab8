@@ -2,7 +2,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:lab8_eat_kks/spotify/movie.dart';
 
+/*
+Ethan Trammell
+Lab 8
+This lab is being used to learn about apis and specifically the use of json decoding
+methods
+This is my api tabbed page of imdb. 
+ */
 class IMDb extends StatefulWidget {
   const IMDb({super.key});
   @override
@@ -15,7 +23,7 @@ class _IMDbstate extends State<IMDb> {
   late final String bearerToken;
 
   final TextEditingController _controller = TextEditingController();
-  List<dynamic> _movies = [];
+  List<Movie> _movies = [];
   bool _isLoading = false;
   String? _error;
 
@@ -25,7 +33,8 @@ class _IMDbstate extends State<IMDb> {
     // Read the token from .env
     bearerToken = dotenv.env['TMDB_BEARER_TOKEN'] ?? '';
   }
-  
+
+  //fetches the movie data
   Future<void> fetch() async {
     final query = _controller.text.trim();
     if (query.isEmpty) {
@@ -37,20 +46,22 @@ class _IMDbstate extends State<IMDb> {
     });
 
     final url = Uri.parse(
+      //this is what is being searched
       'https://api.themoviedb.org/3/search/movie?query=$query',
     );
+    //api key
     final response = await http.get(
       url,
-      headers: {
-        'Authorization':
-            'Bearer $bearerToken',
-      },
+      headers: {'Authorization': 'Bearer $bearerToken'},
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
+      final results = (data['results'] as List)
+          .map((movieJson) => Movie.fromJson(movieJson))
+          .toList();
       setState(() {
-        _movies = data['results'];
+        _movies = results;
         _isLoading = false;
       });
     } else {
@@ -61,10 +72,13 @@ class _IMDbstate extends State<IMDb> {
     }
   }
 
+  //clears data
   void _clearData() {
-    _movies.clear();
-    _controller.clear();
-    _error = null;
+    setState(() {
+      _movies.clear();
+      _controller.clear();
+      _error = null;
+    });
   }
 
   @override
@@ -78,7 +92,7 @@ class _IMDbstate extends State<IMDb> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
             TextField(
@@ -88,7 +102,8 @@ class _IMDbstate extends State<IMDb> {
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 12.0),
+            //this is all of the statements that is can go throught during and after fetching
             if (_isLoading)
               Center(child: CircularProgressIndicator())
             else if (_error != null)
@@ -103,13 +118,10 @@ class _IMDbstate extends State<IMDb> {
                   itemCount: _movies.length,
                   itemBuilder: (context, index) {
                     final movie = _movies[index];
-                    final title = movie['title'] ?? 'No Title';
-                    final releaseDate = movie['release_date'] ?? 'Unknown';
-                    final voteAverage = movie['vote_average']?.toString() ?? '0';
                     return ListTile(
-                      title: Text(title),
-                      subtitle: Text('Release Date: $releaseDate'),
-                      trailing: Text('⭐ $voteAverage'),
+                      title: Text(movie.title),
+                      subtitle: Text('Release Date: ${movie.releaseDate}'),
+                      trailing: Text('${movie.voteAverage}⭐'),
                     );
                   },
                 ),
